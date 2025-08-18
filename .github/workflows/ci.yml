@@ -17,32 +17,11 @@ jobs:
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11"]
         django-version: ["3.2", "4.0", "4.1", "4.2", "5.0"]
-        ddt-version: ["3.8", "4.0", "4.2", "4.3"]
         exclude:
           - python-version: "3.8"
             django-version: "5.0"
-            ddt-version: "4.3"
-          - python-version: "3.8"
-            django-version: "5.0"
-            ddt-version: "4.2"
-          - python-version: "3.8"
-            django-version: "5.0"
-            ddt-version: "4.0"
-          - python-version: "3.8"
-            django-version: "5.0"
-            ddt-version: "3.8"
           - python-version: "3.9"
             django-version: "5.0"
-            ddt-version: "4.3"
-          - python-version: "3.9"
-            django-version: "5.0"
-            ddt-version: "4.2"
-          - python-version: "3.9"
-            django-version: "5.0"
-            ddt-version: "4.0"
-          - python-version: "3.9"
-            django-version: "5.0"
-            ddt-version: "3.8"
 
     steps:
     - uses: actions/checkout@v2
@@ -61,11 +40,9 @@ jobs:
       run: |
         PYTHON_VERSION=${{ matrix.python-version }}
         DJANGO_VERSION=${{ matrix.django-version }}
-        DDT_VERSION=${{ matrix.ddt-version }}
         PYTHON_VERSION=${PYTHON_VERSION//./}
         DJANGO_VERSION=${DJANGO_VERSION//./}
-        DDT_VERSION=${DDT_VERSION//./}
-        tox -e py${PYTHON_VERSION}-django${DJANGO_VERSION}-ddt${DDT_VERSION}
+        tox -e py${PYTHON_VERSION}-django${DJANGO_VERSION}
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v2

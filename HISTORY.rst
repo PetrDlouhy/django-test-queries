@@ -3,6 +3,13 @@
 History
 -------
 
+0.4.0 (TBD)
+++++++++++++++++++
+
+* Remove Django Debug Toolbar dependency - use Django's built-in query capture
+* Improve reliability and performance of query recording
+* Maintain 100% backward compatibility
+
 0.3.0 (2024-05-16)
 ++++++++++++++++++
 

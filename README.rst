@@ -9,7 +9,9 @@ Django test queries
     :target: https://codecov.io/gh/PetrDlouhy/django-test-queries
 
 Extension of assertNumQueries that can record queries that were executed and show the differences in future runs.
-It also shows tracebac of where the query was called.
+It also shows traceback of where the query was called.
+
+**🚀 NEW: DDT-Free Implementation** - No longer requires django-debug-toolbar! More reliable and faster query capture using Django's built-in functionality.
 
 Documentation
 -------------

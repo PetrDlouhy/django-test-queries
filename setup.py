@@ -51,7 +51,8 @@ setup(
     version=version,
     description=(
         "Extension of assertNumQueries that can record queries "
-        "that were executed and show the differences in future runs."
+        "that were executed and show the differences in future runs. "
+        "DDT-free implementation using Django's built-in query capture."
     ),
     long_description=readme + "\n\n" + history,
     author="Petr Dlouhý",
