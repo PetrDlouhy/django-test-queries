@@ -57,6 +57,7 @@ class TestNumQueriesMixin(NumQueriesMixin, TestCase):
         expected_filename = (
             "tests/sqllog/test_num_queries.TestNumQueriesMixin.test_file_comparison_with_existing_lines.0.sqllog"
         )
+        os.makedirs(os.path.dirname(expected_filename), exist_ok=True)
         with open(expected_filename, "w") as f:
             f.write("SELECT 1\nSELECT 2")  # Writing multiple lines to the file
         with self.assertNumQueries(2):
@@ -68,6 +69,7 @@ class TestNumQueriesMixin(NumQueriesMixin, TestCase):
             "tests/sqllog/"
             "test_num_queries.TestNumQueriesMixin.test_file_comparison_with_existing_lines_not_equal.0.sqllog"
         )
+        os.makedirs(os.path.dirname(expected_filename), exist_ok=True)
         with open(expected_filename, "w") as f:
             f.write("SELECT 2")  # Writing multiple lines to the file
         with self.assertRaises(AssertionError) as cm:
@@ -91,6 +93,7 @@ class TestNumQueriesMixin(NumQueriesMixin, TestCase):
             "tests/sqllog/test_num_queries."
             "TestNumQueriesMixin.test_file_comparison_with_existing_lines_delete.0.sqllog"
         )
+        os.makedirs(os.path.dirname(expected_filename), exist_ok=True)
         with open(expected_filename, "w") as f:
             f.write("SELECT 1\nSELECT 3\nSELECT 3")  # Writing multiple lines to the file
         with self.assertRaises(AssertionError) as cm:
@@ -116,6 +119,7 @@ class TestNumQueriesMixin(NumQueriesMixin, TestCase):
             "tests/sqllog/test_num_queries."
             "TestNumQueriesMixin.test_file_comparison_with_existing_lines_replace.0.sqllog"
         )
+        os.makedirs(os.path.dirname(expected_filename), exist_ok=True)
         with open(expected_filename, "w") as f:
             f.write("SELECT 1\nSELECT 2\nSELECT 3\nSELECT 5\nSELECT 6")  # Writing multiple lines to the file
         with self.assertRaises(AssertionError) as cm:
@@ -136,3 +140,33 @@ class TestNumQueriesMixin(NumQueriesMixin, TestCase):
             "TestNumQueriesMixin.test_file_comparison_with_existing_lines_replace.0.sqllog.new",
             error_message,
         )
+
+    def test_fallback_for_missing_file_attribute(self):
+        """Test the fallback path when module.__file__ is None."""
+        # Create a mock test instance where the module has no __file__ attribute
+        import inspect
+        import types
+
+        # Create a fake module without __file__
+        fake_module = types.ModuleType("fake_test_module")
+        # Don't set __file__ attribute - it will be None
+
+        # Temporarily replace the module
+        original_getmodule = inspect.getmodule
+
+        def mock_getmodule(obj):
+            return fake_module
+
+        inspect.getmodule = mock_getmodule
+
+        try:
+            # This should use the fallback path
+            with self.assertNumQueries(1):
+                connections["default"].cursor().execute("SELECT 1")
+
+            # Check that the fallback path was used
+            self.assertIn("test_file", self.context["filename"])
+
+        finally:
+            # Restore original function
+            inspect.getmodule = original_getmodule
